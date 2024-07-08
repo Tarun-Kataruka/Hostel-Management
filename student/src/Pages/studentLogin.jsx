@@ -10,12 +10,12 @@ const StudentLogin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:4000/api/students/login', {
+      const response = await axios.post('http://localhost:5000/api/students/login', {
         email,
         password,
       });
       localStorage.setItem('auth-token', response.data.token);
-      navigate('/profile');
+      navigate('/student-dashboard');
     } catch (error) {
       console.error('Login error', error);
       alert('Login failed. Please check your credentials.');

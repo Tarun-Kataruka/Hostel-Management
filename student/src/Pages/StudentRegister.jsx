@@ -37,7 +37,7 @@ const StudentRegister = () => {
     e.preventDefault();
     try {
       await axios.post('http://localhost:5000/api/students/signup', formData);
-      navigate('/login');
+      navigate('/student-login');
     } catch (error) {
       console.error('Registration error', error);
       alert('Registration failed. Please try again.');

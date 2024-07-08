@@ -5,7 +5,7 @@ import Student from '../models/Student.js';
 
 const router = express.Router();
 
-const JWT_SECRET = 'your_jwt_secret_key'; // Use a strong secret key and store it securely
+const JWT_SECRET = 'HOSTEL'; // Use a strong secret key and store it securely
 
 // Registration route
 router.post('/signup', async (req, res) => {
@@ -76,15 +76,36 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Fetch student details
-router.get('/profile', async (req, res) => {
+const authMiddleware = async (req, res, next) => {
+    const token = req.header('Authorization');
+    if (!token) {
+        return res.status(401).json({ message: 'Authorization denied' });
+    }
     try {
-        const students = await Student.find().select('-password');
-        res.status(200).json(students);
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.student = decoded.student;
+        next();
+    } catch (error) {
+        console.error(error.message);
+        res.status(401).json({ message: 'Token is not valid' });
+    }
+};
+
+// Fetch student details
+router.get('/profile', authMiddleware, async (req, res) => {
+    try {
+        // req.student is populated by the auth middleware
+        const student = await Student.findById(req.student.id).select('-password');
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+        const { name, rollNo, email, roomNo, parentDetails,id } = student;
+        res.status(200).json({ name, rollNo, email, roomNo, parentDetails,id });
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: 'Server Error' });
     }
 });
+
 
 export default router;

@@ -5,11 +5,14 @@ const complaintSchema = new mongoose.Schema({
     studentId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Student',
-        required:true
     },
     complaint:{
         type:String,
         required:true
+    },
+    roomNo: {
+        type: String,
+        required: true
     },
     status:{
         type:String,
