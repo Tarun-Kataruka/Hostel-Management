@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import FoodMenu from '../Components/FoodMenu';
 import StudentProfile from '../Components/StudentProfile';
+import GatePass from '../Components/GatePass'; // Assuming GatePassForm component is imported
 
 const StudentDashboard = () => {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const complaintsContainerRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,20 +20,20 @@ const StudentDashboard = () => {
           throw new Error('User not authenticated');
         }
 
-        const response = await axios.get('http://localhost:5000/api/students/profile', {
+        const profileResponse = await axios.get('http://localhost:5000/api/students/profile', {
           headers: {
-            Authorization: token,
+            Authorization: `Bearer ${token}`,
           },
         });
 
-        const studentId = response.data.id;
+        const studentId = profileResponse.data.id;
         if (!studentId) {
           throw new Error('Student ID not found');
         }
 
-        const complaintsResponse = await axios.get(`http://localhost:5000/api/complaints?studentId=${studentId}`, {
+        const complaintsResponse = await axios.get(`http://localhost:5000/api/complaints?id=${studentId}`, {
           headers: {
-            Authorization: token,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -46,6 +48,12 @@ const StudentDashboard = () => {
     fetchComplaints();
   }, []);
 
+  useEffect(() => {
+    // Check if complaints container has overflow
+    const complaintsContainer = complaintsContainerRef.current;
+    // Handle scroll logic if needed
+  }, [complaints]);
+
   const handleAddComplaint = () => {
     navigate('/complaint-form');
   };
@@ -54,28 +62,43 @@ const StudentDashboard = () => {
   if (error) return <div className="text-center mt-4">Error: {error}</div>;
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center min-h-screen bg-gradient-to-r from-blue-50 to-blue-100 p-6">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-screen bg-gradient-to-r from-blue-50 to-blue-100 p-6">
       {/* Left Side: Student Profile */}
-      <div className="flex-none w-full lg:w-1/3 p-4">
-        <div className="bg-white shadow-xl rounded-lg p-6 border-t-4 border-blue-500">
-          <StudentProfile />
-        </div>
+      <div className="lg:col-span-1 bg-white shadow-xl rounded-lg p-6 border-t-4 border-blue-500">
+        <StudentProfile />
       </div>
 
-      {/* Center: Food Menu */}
-      <div className="flex-grow p-4 mt-6 lg:mt-0 lg:ml-6">
-        <div className="bg-white shadow-xl rounded-lg p-6 border-t-4 border-green-500">
+      {/* Right Side: Food Menu and Complaints */}
+      <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Food Menu */}
+        <div className="bg-white shadow-xl rounded-lg p-6 border-t-4 border-green-500 h-[calc(50vh - 6rem)]">
           <FoodMenu />
         </div>
-      </div>
 
-      {/* Right Side: Complaints */}
-      <div className="flex-none w-full lg:w-1/3 p-4 mt-6 lg:mt-0 lg:ml-6">
-        <div className="bg-white shadow-xl rounded-lg p-6 border-t-4 border-red-500">
-          <h2 className="text-2xl font-bold mb-4">Complaints</h2>
-          {complaints.length === 0 ? (
-            <div className="text-center">
-              <p className="mb-4">No complaints filed yet.</p>
+        {/* Complaints */}
+        <div className="bg-white shadow-xl rounded-lg p-6 border-t-4 border-red-500 h-[calc(50vh - 6rem)]">
+          <div
+            ref={complaintsContainerRef}
+            className="h-96 overflow-auto"
+          >
+            <h2 className="text-2xl font-bold mb-4">Complaints</h2>
+            {complaints.length === 0 ? (
+              <div className="text-center">
+                <p className="mb-4">No complaints filed yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <ul>
+                  {complaints.map((complaint) => (
+                    <li key={complaint._id} className="bg-gray-100 p-4 rounded-md shadow-sm">
+                      <p><strong>Complaint:</strong> {complaint.complaint}</p>
+                      <p><strong>Status:</strong> {complaint.status}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className="text-center mt-4">
               <button
                 onClick={handleAddComplaint}
                 className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
@@ -83,27 +106,14 @@ const StudentDashboard = () => {
                 Add New Complaint
               </button>
             </div>
-          ) : (
-            <div>
-              <ul className="space-y-4">
-                {complaints.map((complaint) => (
-                  <li key={complaint._id} className="bg-gray-100 p-4 rounded-md shadow-sm">
-                    <p><strong>Complaint:</strong> {complaint.complaint}</p>
-                    <p><strong>Status:</strong> {complaint.status}</p>
-                  </li>
-                ))}
-              </ul>
-              <div className="text-center mt-4">
-                <button
-                  onClick={handleAddComplaint}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                >
-                  Add New Complaint
-                </button>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
+      </div>
+
+      {/* Gate Pass Form */}
+      <div className="lg:col-span-2 bg-white shadow-xl rounded-lg p-6 border-t-4 border-yellow-500">
+        <h2 className="text-2xl font-bold mb-4">Apply for Gate Pass</h2>
+        <GatePass />
       </div>
     </div>
   );

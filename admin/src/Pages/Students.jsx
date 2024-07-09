@@ -10,7 +10,17 @@ const Students = () => {
 
   const fetchStudents = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/students/profile');
+      const token = localStorage.getItem('auth-token');
+      if (!token) {
+        throw new Error('User not authenticated');
+        return;
+      }
+      const config={
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      };
+      const res = await axios.get('http://localhost:5000/api/students/all');
       setStudents(res.data);
     } catch (error) {
       console.error('Error fetching students:', error);

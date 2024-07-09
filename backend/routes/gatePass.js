@@ -1,44 +1,41 @@
 import express from 'express';
+import GatePass from '../models/GatePass.js';
+
 const router = express.Router();
-import GatePass from '../models/GatePass';
 
-router.post('/',async (req,res)=>{
-    const {studentId,reason} = req.body;
-    try {
-        const newGatePass = new GatePass({
-            studentId,
-            reason
-        });
-        await newGatePass.save();
-        res.status(201).json({message:'Gate Pass applied successfully'});
-    } catch (error) {
-        res.status(500).json({message:'Server Error'});
-    }
+// Route: GET /api/gatepasses
+// Description: Get all gate passes
+router.get('/', async (req, res) => {
+  try {
+    const gatePasses = await GatePass.find();
+    res.json(gatePasses);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
-router.get('/',async (req,res)=>{
-    try {
-        const gatePass = await GatePass.find().populate('studentId',['name','rollNo']);
-        res.status(200).json(gatePass);
-    } catch (error) {
-        res.status(500).json({message:'Server Error'});
-    }
+// Route: POST /api/gatepasses
+// Description: Create a new gate pass
+router.post('/', async (req, res) => {
+  const { roomNumber, studentName, rollNumber, reason, dateFrom, dateTo } = req.body;
+
+  try {
+    const newGatePass = new GatePass({
+      roomNumber,
+      studentName,
+      rollNumber,
+      reason,
+      dateFrom,
+      dateTo,
+    });
+
+    const savedGatePass = await newGatePass.save();
+    res.status(201).json(savedGatePass);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
 });
 
-router.put('/:id',async (req,res)=>{
-    const {status} = req.body;
-    try {
-        let gatePass = await GatePass.findById(req.params.id);
-        if(!gatePass){
-            return res.status(404).json({message:'Gate Pass not found'});
-        }
-    gatePass.status= status;
-    await gatePass.save();
-    res.status(200).json({message:'Gate Pass updated successfully'});
-    }
-    catch (error) {
-        res.status(500).json({message:'Server Error'});
-    }
-});
+// Add other routes like updating and deleting gate passes as needed
 
 export default router;

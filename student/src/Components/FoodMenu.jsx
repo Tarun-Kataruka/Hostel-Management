@@ -37,8 +37,8 @@ const FoodMenu = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto my-8 p-6 bg-gradient-to-r from-green-200 to-blue-200 shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold text-center mb-6 text-green-700">Today's Food Menu</h2>
+    <div className="mx-auto my-2 p-2 bg-gradient-to-r from-green-200 to-blue-200 shadow-lg rounded-lg h-[450px]">
+      <h2 className="text-2xl font-bold text-center mb-2 text-green-700">Today's Food Menu</h2>
       <div className="text-lg mb-4">
         <strong className="text-gray-700">Day:</strong> <span className="text-gray-800">{menu.day}</span>
       </div>
