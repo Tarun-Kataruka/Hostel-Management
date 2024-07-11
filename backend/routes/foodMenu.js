@@ -36,22 +36,14 @@ router.get('/',async (req,res)=>{
     }
 });
 
-// router.put('/:id',async (req,res)=>{
-//     const {day,breakfast,lunch,dinner} = req.body;
-//     try {
-//         let foodMenu = await FoodMenu.findById(req.params.id);
-//         if(!foodMenu){
-//             return res.status(404).json({message:'Food Menu not found'});
-//         }
-//         foodMenu.day = day;
-//         foodMenu.breakfast = breakfast;
-//         foodMenu.lunch = lunch;
-//         foodMenu.dinner = dinner;
-//         await foodMenu.save();
-//         res.status(200).json({message:'Food Menu updated successfully'});
-//     } catch (error) {
-//         res.status(500).json({message:'Server Error'});
-//     }
-// });
+router.delete('/:day', async (req, res) => {
+    try {
+      const menu = await FoodMenu.findOneAndDelete({ day: req.params.day });
+      if (!menu) return res.status(404).json({ message: 'Menu not found' });
+      res.json({ message: 'Menu deleted' });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
 
 export default router;

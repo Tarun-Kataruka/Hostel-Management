@@ -24,8 +24,12 @@ const Navbar = () => {
           {location.pathname === '/about' && <hr className="border-none w-4/5 h-1 rounded-lg bg-red-700"></hr>}
         </li>
         <li className='flex flex-col items-center justify-center gap-1 cursor-pointer'>
-          <Link to='/student-login' className={location.pathname === '/student-login' ? 'text-red-700' : ''}>Student Login</Link>
-          {location.pathname === '/student-login' && <hr className="border-none w-4/5 h-1 rounded-lg bg-red-700"></hr>}
+        <div className="flex items-center gap-11">
+            {localStorage.getItem('auth-token')
+            ?<button className='h-14 w-40 outline-none border-solid border-2 rounded-3xl text-slate-600 text-xl font-medium bg-white cursor-pointer hover:bg-orange-500' onClick={()=>{localStorage.removeItem('auth-token');window.location.replace('/')}}>Logout</button>
+            :<Link to='/student-login'>
+            <button className='h-14 w-40 outline-none border-solid border-2 rounded-3xl text-slate-600 text-xl font-medium bg-white cursor-pointer hover:bg-orange-500'>Login</button></Link>}
+            </div>
         </li>
         <li className='flex flex-col items-center justify-center gap-1 cursor-pointer'>
           <Link to='/register' className={location.pathname === '/register' ? 'text-red-700' : ''}>Register</Link>

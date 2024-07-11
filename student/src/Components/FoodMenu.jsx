@@ -8,7 +8,7 @@ const FoodMenu = () => {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const days = ["Sunday", "monday", "tues", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const today = new Date();
         const currentDay = days[today.getDay()];
 

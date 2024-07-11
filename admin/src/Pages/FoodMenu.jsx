@@ -15,13 +15,13 @@ const FoodMenu = () => {
   }, []);
 
   const fetchMenus = async () => {
-    try{
-    const res = await axios.get('http://localhost:5000/api/foodMenu');
-    setMenus(res.data);
-  } catch (error) {
-    console.error('Fetch menus error', error);
-  }
-};
+    try {
+      const res = await axios.get('http://localhost:5000/api/foodMenu');
+      setMenus(res.data);
+    } catch (error) {
+      console.error('Fetch menus error', error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,11 +30,20 @@ const FoodMenu = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-    await axios.post('http://localhost:5000/api/foodMenu', menu);
-    fetchMenus();
+    try {
+      await axios.post('http://localhost:5000/api/foodMenu', menu);
+      fetchMenus();
     } catch (error) {
-    console.error('Submit menu error    ', error);
+      console.error('Submit menu error', error);
+    }
+  };
+
+  const deleteMenu = async (day) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/foodMenu/${day}`);
+      fetchMenus();
+    } catch (error) {
+      console.error('Delete menu error', error);
     }
   };
 
@@ -92,6 +101,7 @@ const FoodMenu = () => {
             <th className="py-2 px-4 border">Breakfast</th>
             <th className="py-2 px-4 border">Lunch</th>
             <th className="py-2 px-4 border">Dinner</th>
+            <th className="py-2 px-4 border">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -101,6 +111,14 @@ const FoodMenu = () => {
               <td className="py-2 px-4 border">{menu.breakfast}</td>
               <td className="py-2 px-4 border">{menu.lunch}</td>
               <td className="py-2 px-4 border">{menu.dinner}</td>
+              <td className="py-2 px-4 border">
+                <button
+                  onClick={() => deleteMenu(menu.day)}
+                  className="px-2 py-1 bg-red-500 text-white"
+                >
+                  Remove
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

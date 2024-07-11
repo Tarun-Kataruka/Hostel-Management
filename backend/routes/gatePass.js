@@ -36,6 +36,28 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Add other routes like updating and deleting gate passes as needed
+// Route: PUT /api/gatepasses/:id
+// Description: Update a gate pass status by ID
+router.put('/:id', async (req, res) => {
+  const { status } = req.body;
+
+  try {
+    const updatedGatePass = await GatePass.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedGatePass) {
+      return res.status(404).json({ message: 'Gate pass not found' });
+    }
+
+    res.json(updatedGatePass);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Add other routes like deleting gate passes as needed
 
 export default router;
