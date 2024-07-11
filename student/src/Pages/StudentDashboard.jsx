@@ -48,12 +48,6 @@ const StudentDashboard = () => {
     fetchComplaints();
   }, []);
 
-  useEffect(() => {
-    // Check if complaints container has overflow
-    const complaintsContainer = complaintsContainerRef.current;
-    // Handle scroll logic if needed
-  }, [complaints]);
-
   const handleAddComplaint = () => {
     navigate('/complaint-form');
   };
@@ -62,21 +56,20 @@ const StudentDashboard = () => {
   if (error) return <div className="text-center mt-4">Error: {error}</div>;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-screen bg-gradient-to-r from-blue-50 to-blue-100 p-6">
-      {/* Left Side: Student Profile */}
-      <div className="lg:col-span-1 bg-white shadow-xl rounded-lg p-6 border-t-4 border-blue-500">
-        <StudentProfile />
-      </div>
+    <div className="flex flex-col min-h-screen bg-gradient-to-r from-blue-50 to-blue-100 p-6">
+      <div className="flex flex-1">
+        {/* Left Side: Student Profile */}
+        <div className="flex-1 bg-white shadow-xl rounded-lg p-6 border-t-4 border-blue-500 mr-4">
+          <StudentProfile />
+        </div>
 
-      {/* Right Side: Food Menu and Complaints */}
-      <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Food Menu */}
-        <div className="bg-white shadow-xl rounded-lg p-6 border-t-4 border-green-500 h-[calc(50vh - 6rem)]">
+        {/* Center: Food Menu */}
+        <div className="flex-1 bg-white shadow-xl rounded-lg p-6 border-t-4 border-green-500 mx-4">
           <FoodMenu />
         </div>
 
-        {/* Complaints */}
-        <div className="bg-white shadow-xl rounded-lg p-6 border-t-4 border-red-500 h-[calc(50vh - 6rem)]">
+        {/* Right Side: Complaints */}
+        <div className="flex-1 bg-white shadow-xl rounded-lg p-6 border-t-4 border-red-500 ml-4">
           <div
             ref={complaintsContainerRef}
             className="h-96 overflow-auto"
@@ -110,8 +103,8 @@ const StudentDashboard = () => {
         </div>
       </div>
 
-      {/* Gate Pass Form */}
-      <div className="lg:col-span-2 bg-white shadow-xl rounded-lg p-6 border-t-4 border-yellow-500">
+      {/* Bottom: Gate Pass Form */}
+      <div className="bg-white shadow-xl rounded-lg p-6 border-t-4 border-yellow-500 mt-4">
         <h2 className="text-2xl font-bold mb-4">Apply for Gate Pass</h2>
         <GatePass />
       </div>
